@@ -1,12 +1,10 @@
 library(shiny)
-library(shinydashboard)
+library(metricminer)
 
-# Testing
-
-ui <- dashboardPage(
-  dashboardHeader(),
-  dashboardSidebar(),
-  dashboardBody()
+ui <- navbarPage("ITCR Analytics",
+  tabPanel("GitHub"),
+  tabPanel("Google Analytics"),
+  tabPanel("Calendly")
 )
 
 server <- function(input, output) { }
