@@ -47,11 +47,23 @@ ui <- page_navbar(
                 showcase = bsicons::bs_icon("list-ol")
               )
             ),
-            card(
-              card_header("Metrics Table"),
-              DTOutput("metrics_table")
+            navset_card_tab(
+              height = 450,
+              full_screen = TRUE,
+              title = "Tables",
+              nav_panel(
+                "Metrics",
+                DTOutput("metrics_table")
+              ),
+              nav_panel(
+                "Dimensions",
+                DTOutput("dimensions_table")
+              ),
+              nav_panel(
+                "Link Clicks",
+                DTOutput("link_clicks_table")
+              )
             )
-            
   ),
   nav_panel("GitHub"),
   nav_panel("Calendly"),
@@ -67,7 +79,37 @@ ui <- page_navbar(
 server <- function(input, output) {
   output$metrics_table <- renderDT({
     datatable(
-      metrics, fillContainer = TRUE
+      metrics, 
+      colnames = c("Website", "Active Users", "New Users", "Total Users",
+                   "Event Count per User", "Screen Page Views per User",
+                   "Sessions", "Average Session Duration", "Screen Page Views",
+                   "Engagement Rate"),
+      options = list(lengthChange = FALSE, # remove "Show X entries"
+                     searching = FALSE), # remove Search box
+      # For the table to grow/shrink
+      fillContainer = TRUE
+    )
+  })
+  output$dimensions_table <- renderDT({
+    datatable(
+      dimensions, 
+      colnames = c("Website", "Day", "Month", "Year",
+                   "Country", "Full Page URL"),
+      options = list(lengthChange = FALSE, # remove "Show X entries"
+                     searching = FALSE), # remove Search box
+      # For the table to grow/shrink
+      fillContainer = TRUE
+    )
+  })
+  output$link_clicks_table <- renderDT({
+    datatable(
+      link_clicks, 
+      colnames = c("Website", "Link URL"),
+      options = list(lengthChange = FALSE, # remove "Show X entries"
+                     searching = FALSE), # remove Search box
+      # For the table to grow/shrink
+      fillContainer = TRUE,
+      escape = FALSE
     )
   })
   
