@@ -28,27 +28,43 @@ ui <- page_navbar(
   nav_spacer(),
   nav_panel("Google Analytics",
             layout_columns(
-              fill = FALSE,
+              fill = TRUE,
               value_box(
                 # TODO: Dynamic Rendering
                 # https://rstudio.github.io/bslib/articles/value-boxes/index.html#dynamic-rendering-shiny
-                title = "Value 1 comes here",
-                value = 12,
-                showcase = bsicons::bs_icon("people-fill")
+                title = "# of Visits to ITN Website",
+                value = 5123,
+                p("All-Time"),
+                showcase = bsicons::bs_icon("people-fill"),
+                showcase_layout = "top right",
               ),
               value_box(
                 title = "Value 2 comes here",
                 value = 23,
-                showcase = bsicons::bs_icon("person-circle")
+                showcase = bsicons::bs_icon("person-fill"),
+                showcase_layout = "top right"
               ),
               value_box(
                 title = "Value 3 comes here",
                 value = 23,
-                showcase = bsicons::bs_icon("list-ol")
+                showcase = bsicons::bs_icon("list-ol"),
+                showcase_layout = "top right"
+              ),
+              value_box(
+                title = "# of Courses",
+                value = 23,
+                showcase = bsicons::bs_icon("book-half"),
+                showcase_layout = "top right"
+              ),
+              value_box(
+                title = "# of Workshops",
+                value = 23,
+                showcase = bsicons::bs_icon("calendar-fill"),
+                showcase_layout = "top right"
               )
             ),
             navset_card_tab(
-              height = 450,
+              height = 900,
               full_screen = TRUE,
               title = "Tables",
               nav_panel(
@@ -98,7 +114,8 @@ server <- function(input, output) {
       options = list(lengthChange = FALSE, # remove "Show X entries"
                      searching = FALSE), # remove Search box
       # For the table to grow/shrink
-      fillContainer = TRUE
+      fillContainer = TRUE,
+      escape = FALSE
     )
   })
   output$link_clicks_table <- renderDT({
