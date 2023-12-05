@@ -1,5 +1,9 @@
 library(shiny)
 library(bslib)
+library(bsicons)
+library(htmltools)
+library(ggplot2)
+library(fontawesome)
 library(metricminer)
 library(DT)
 source("data.R")
@@ -24,7 +28,7 @@ link_help <- tags$a(
 ui <- page_navbar(
   # Hard-code version of bootstrap used
   theme = bs_theme(version = 5),
-  title = "ITCR Analytics Dashboard",
+  title = "ITCR Analytics",
   nav_spacer(),
   nav_panel("Google Analytics",
             layout_columns(
@@ -39,49 +43,90 @@ ui <- page_navbar(
                 showcase_layout = "top right",
               ),
               value_box(
-                title = "Value 2 comes here",
-                value = 23,
-                showcase = bsicons::bs_icon("person-fill"),
+                title = "# of Visits to Courses",
+                value = 3965,
+                p("All-Time for All Courses"),
+                showcase = bsicons::bs_icon("people-fill"),
                 showcase_layout = "top right"
               ),
               value_box(
-                title = "Value 3 comes here",
+                title = "# of Visits to Workshops",
                 value = 23,
+                p("All-Time for All Workshops"),
                 showcase = bsicons::bs_icon("list-ol"),
                 showcase_layout = "top right"
               ),
               value_box(
                 title = "# of Courses",
                 value = 23,
+                p("ITCR-funded Courses"),
                 showcase = bsicons::bs_icon("book-half"),
                 showcase_layout = "top right"
               ),
               value_box(
                 title = "# of Workshops",
                 value = 23,
+                p("ITCR-funded Workshops"),
                 showcase = bsicons::bs_icon("calendar-fill"),
                 showcase_layout = "top right"
               )
             ),
-            navset_card_tab(
-              height = 900,
-              full_screen = TRUE,
-              title = "Tables",
-              nav_panel(
-                "Metrics",
-                DTOutput("metrics_table")
+            layout_column_wrap(
+              width = NULL,
+              style = css(grid_template_columns = "1.2fr 1fr"),
+              navset_card_tab(
+                height = 900,
+                full_screen = TRUE,
+                title = "Tables",
+                nav_panel(
+                  "Metrics",
+                  DTOutput("metrics_table")
+                ),
+                nav_panel(
+                  "Dimensions",
+                  DTOutput("dimensions_table")
+                ),
+                nav_panel(
+                  "Link Clicks",
+                  DTOutput("link_clicks_table")
+                )
               ),
-              nav_panel(
-                "Dimensions",
-                DTOutput("dimensions_table")
+              card(
+                card_header("PlaceHolder Plot"),
+                plotOutput("p")
+              )
+              
+            )
+            
+  ),
+  nav_panel("GitHub",
+            layout_columns(
+              fill = FALSE,
+              value_box(
+                # TODO: Dynamic Rendering
+                # https://rstudio.github.io/bslib/articles/value-boxes/index.html#dynamic-rendering-shiny
+                title = "Issues/Pull Requests Opened",
+                value = 13,
+                p("All-Time"),
+                showcase = bsicons::bs_icon("exclamation-circle"),
+                showcase_layout = "top right",
               ),
-              nav_panel(
-                "Link Clicks",
-                DTOutput("link_clicks_table")
+              value_box(
+                title = "Pull Requests Merged/Closed",
+                value = 3965,
+                p("All-Time"),
+                showcase = bsicons::bs_icon("x-circle"),
+                showcase_layout = "top right"
+              ),
+              value_box(
+                title = "Remaining Open Issues",
+                value = 23,
+                p("All-Time"),
+                showcase = bsicons::bs_icon("exclamation-circle"),
+                showcase_layout = "top right"
               )
             )
   ),
-  nav_panel("GitHub"),
   nav_panel("Calendly"),
   nav_menu(
     title = "Links",
@@ -101,7 +146,11 @@ server <- function(input, output) {
                    "Sessions", "Average Session Duration", "Screen Page Views",
                    "Engagement Rate"),
       options = list(lengthChange = FALSE, # remove "Show X entries"
-                     searching = FALSE), # remove Search box
+                     searching = FALSE, # remove Search box
+                     autoWidth = TRUE,
+                     columnDefs = list(list(width = '95px', 
+                                            targets = c(1:(ncol(metrics) - 1))))
+      ), 
       # For the table to grow/shrink
       fillContainer = TRUE
     )
@@ -128,6 +177,11 @@ server <- function(input, output) {
       fillContainer = TRUE,
       escape = FALSE
     )
+  })
+  output$p <- renderPlot({
+    ggplot(mtcars) +
+      geom_histogram(aes(mpg)) +
+      theme_bw(base_size = 20)
   })
   
 }

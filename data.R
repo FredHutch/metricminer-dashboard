@@ -18,6 +18,7 @@ round2 <- function(x) {
   )
 }
 
+# ITCR Website Data
 itcr_website_data <- readRDS("data/itcr_website_data.rds")
 
 metrics <- tibble::as_tibble(itcr_website_data[[1]]) %>%
@@ -31,4 +32,8 @@ dimensions <- tibble::as_tibble(itcr_website_data[[2]]) %>%
 link_clicks <- tibble::as_tibble(itcr_website_data[[3]]) %>% 
   mutate(linkUrl = paste0("<a href='", linkUrl,"' target='_blank'>", linkUrl,"</a>"))
 
+# jhudsl GitHub Metrics
 jhudsl_github_metrics <- read_tsv("data/jhudsl_github_metrics.tsv")
+
+# Slido
+slido_data <- readRDS("data/slido_data.RDS")
