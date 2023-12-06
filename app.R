@@ -37,7 +37,7 @@ ui <- page_navbar(
                 # TODO: Dynamic Rendering
                 # https://rstudio.github.io/bslib/articles/value-boxes/index.html#dynamic-rendering-shiny
                 title = "# of Visits to ITN Website",
-                value = 5123,
+                value = 5066,
                 p("All-Time"),
                 showcase = bsicons::bs_icon("people-fill"),
                 showcase_layout = "top right",
