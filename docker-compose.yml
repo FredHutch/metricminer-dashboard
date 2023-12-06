@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  metricminer:
+    image: sc-registry.fredhutch.org/metricminer:latest
+    networks:
+      - proxy
+    deploy:
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.metricminer.rule=Host(`itcr-analytics.fredhutch.org`)"
+        - "traefik.http.routers.metricminer-secured.rule=Host(`itcr-analytics.fredhutch.org`)"
+        - "traefik.http.routers.metricminer.entrypoints=web,web-secured"
+        - "traefik.http.services.metricminer.loadbalancer.server.port=3838" # it seems you always need to give traefik a port so it 'notices' the service
+        - "traefik.http.routers.metricminer.tls=true"
+
+networks:
+  proxy:
+    external: true
