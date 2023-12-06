@@ -1,6 +1,7 @@
 library(tibble)
 library(readr)
 library(dplyr)
+library(metricminer)
 
 # Custom rounding function for x > 1 that rounds up 
 # if decimal place of x is more than or equal to 0.5 

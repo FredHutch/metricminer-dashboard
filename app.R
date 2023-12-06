@@ -29,6 +29,7 @@ ui <- page_navbar(
   # Hard-code version of bootstrap used
   theme = bs_theme(version = 5),
   title = "ITCR Analytics",
+  fillable = TRUE,
   nav_spacer(),
   nav_panel("Google Analytics",
             layout_columns(
@@ -36,14 +37,15 @@ ui <- page_navbar(
               value_box(
                 # TODO: Dynamic Rendering
                 # https://rstudio.github.io/bslib/articles/value-boxes/index.html#dynamic-rendering-shiny
-                title = "# of Visits to ITN Website",
+                title = "# of ITN Website Users",
                 value = 5066,
+                fill = TRUE,
                 p("All-Time"),
                 showcase = bsicons::bs_icon("people-fill"),
                 showcase_layout = "top right",
               ),
               value_box(
-                title = "# of Visits to Courses",
+                title = "# of Course Visits",
                 value = 3965,
                 p("All-Time for All Courses"),
                 showcase = bsicons::bs_icon("people-fill"),
@@ -53,7 +55,7 @@ ui <- page_navbar(
                 title = "# of Workshops",
                 value = 14,
                 p("All-Time for All Workshops"),
-                showcase = bsicons::bs_icon("list-ol"),
+                showcase = bsicons::bs_icon("hammer"),
                 showcase_layout = "top right"
               ),
               value_box(
@@ -67,11 +69,12 @@ ui <- page_navbar(
                 title = "Bookdown learners",
                 value = 9452,
                 p("2447 Coursera learners"),
-                showcase = bsicons::bs_icon("calendar-fill"),
+                showcase = bsicons::bs_icon("browser-chrome"),
                 showcase_layout = "top right"
               )
             ),
             layout_column_wrap(
+              fill = TRUE,
               width = NULL,
               style = css(grid_template_columns = "1.2fr 1fr"),
               navset_card_tab(
@@ -180,16 +183,16 @@ server <- function(input, output) {
   })
   output$metric_plot <- renderPlot({
     ggplot(metrics, aes(x = reorder(website, -activeUsers), y = activeUsers)) +
-      geom_bar(stat = "identity", fill = "#89CFF0") +
+      geom_bar(stat = "identity", fill = "#007bc2") +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, hjust=1)) +
       xlab("") +
-      ylab("Users") +
-      geom_text(aes(label = activeUsers), size = 6, vjust = - 1) +
+      ylab("# of Users") +
+      geom_text(aes(label = activeUsers), size = 5, vjust = - 1) +
       ylim(c(0, 5500)) +
       theme(axis.title.y = element_text(size = rel(1.5)),
-            axis.text.x = element_text(size = rel(1.2)),
-            axis.text.y = element_text(size = rel(1.2)))
+            axis.text.x = element_text(size = rel(1.4)),
+            axis.text.y = element_text(size = rel(1.4)))
   })
   
 }
