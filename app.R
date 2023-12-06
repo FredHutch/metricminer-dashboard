@@ -50,23 +50,23 @@ ui <- page_navbar(
                 showcase_layout = "top right"
               ),
               value_box(
-                title = "# of Visits to Workshops",
-                value = 23,
+                title = "# of Workshops",
+                value = 14,
                 p("All-Time for All Workshops"),
                 showcase = bsicons::bs_icon("list-ol"),
                 showcase_layout = "top right"
               ),
               value_box(
                 title = "# of Courses",
-                value = 23,
+                value = 14,
                 p("ITCR-funded Courses"),
                 showcase = bsicons::bs_icon("book-half"),
                 showcase_layout = "top right"
               ),
               value_box(
-                title = "# of Workshops",
-                value = 23,
-                p("ITCR-funded Workshops"),
+                title = "Bookdown learners",
+                value = 9452,
+                p("2447 Coursera learners"),
                 showcase = bsicons::bs_icon("calendar-fill"),
                 showcase_layout = "top right"
               )
@@ -92,8 +92,8 @@ ui <- page_navbar(
                 )
               ),
               card(
-                card_header("PlaceHolder Plot"),
-                plotOutput("p")
+                card_header("Plot of Users"),
+                plotOutput("metric_plot")
               )
               
             )
@@ -178,12 +178,29 @@ server <- function(input, output) {
       escape = FALSE
     )
   })
-  output$p <- renderPlot({
-    ggplot(mtcars) +
-      geom_histogram(aes(mpg)) +
-      theme_bw(base_size = 20)
+  output$metric_plot <- renderPlot({
+    ggplot(metrics, aes(x = reorder(website, -activeUsers), y = activeUsers)) +
+      geom_bar(stat = "identity", fill = "#89CFF0") +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+      xlab("") +
+      ylab("Users") +
+      geom_text(aes(label = activeUsers), size = 6, vjust = - 1) +
+      ylim(c(0, 5500)) +
+      theme(axis.title.y = element_text(size = rel(1.5)),
+            axis.text.x = element_text(size = rel(1.2)),
+            axis.text.y = element_text(size = rel(1.2)))
   })
   
 }
 
-shinyApp(ui, server)
+options <- list()
+if (!interactive()) {
+  options$port = 3838
+  options$launch.browser = FALSE
+  options$host = "0.0.0.0"
+
+}
+
+shinyApp(ui, server, options=options)
+
