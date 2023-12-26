@@ -1,3 +1,4 @@
+# Library----
 library(shiny)
 library(bslib)
 library(bsicons)
@@ -6,7 +7,11 @@ library(ggplot2)
 library(fontawesome)
 library(metricminer)
 library(DT)
+library(googlesheets4)
 source("data.R")
+
+# Setup ----
+googlesheets4::gs4_deauth()
 
 link_itn <- tags$a(
   shiny::icon("house"), "ITN",
@@ -25,6 +30,7 @@ link_help <- tags$a(
 )
 
 
+# UI----
 ui <- page_navbar(
   # Favicon
   tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
@@ -142,10 +148,27 @@ ui <- page_navbar(
   )
 )
 
-server <- function(input, output) {
+# Server----
+server <- function(input, output, session) {
+  # Google Sheet
+  metrics <- reactiveFileReader(1000, session,
+                                "https://docs.google.com/spreadsheets/d/13x8lD9SeuPGCs8SbtbRRK_q6o1V_rd3B07JuhebT-vk/edit?usp=sharing",
+                                googlesheets4::read_sheet,
+                                sheet = "metrics")
+  dimensions <- reactiveFileReader(1000, session,
+                                "https://docs.google.com/spreadsheets/d/13x8lD9SeuPGCs8SbtbRRK_q6o1V_rd3B07JuhebT-vk/edit?usp=sharing",
+                                googlesheets4::read_sheet,
+                                sheet = "dimensions")
+  link_clicks <- reactiveFileReader(1000, session,
+                                "https://docs.google.com/spreadsheets/d/13x8lD9SeuPGCs8SbtbRRK_q6o1V_rd3B07JuhebT-vk/edit?usp=sharing",
+                                googlesheets4::read_sheet,
+                                sheet = "link_clicks")
+  
+  
+  
   output$metrics_table <- renderDT({
     datatable(
-      metrics, 
+      metrics(), 
       colnames = c("Website", "Active Users", "New Users", "Total Users",
                    "Event Count per User", "Screen Page Views per User",
                    "Sessions", "Average Session Duration", "Screen Page Views",
@@ -154,7 +177,7 @@ server <- function(input, output) {
                      searching = FALSE, # remove Search box
                      autoWidth = TRUE,
                      columnDefs = list(list(width = '95px', 
-                                            targets = c(1:(ncol(metrics) - 1))))
+                                            targets = c(1:(ncol(metrics()) - 1))))
       ), 
       # For the table to grow/shrink
       fillContainer = TRUE
@@ -162,7 +185,7 @@ server <- function(input, output) {
   })
   output$dimensions_table <- renderDT({
     datatable(
-      dimensions, 
+      dimensions(), 
       colnames = c("Website", "Day", "Month", "Year",
                    "Country", "Full Page URL"),
       options = list(lengthChange = FALSE, # remove "Show X entries"
@@ -174,7 +197,7 @@ server <- function(input, output) {
   })
   output$link_clicks_table <- renderDT({
     datatable(
-      link_clicks, 
+      link_clicks(), 
       colnames = c("Website", "Link URL"),
       options = list(lengthChange = FALSE, # remove "Show X entries"
                      searching = FALSE), # remove Search box
@@ -184,7 +207,7 @@ server <- function(input, output) {
     )
   })
   output$metric_plot <- renderPlot({
-    ggplot(metrics, aes(x = reorder(website, -activeUsers), y = activeUsers)) +
+    ggplot(metrics(), aes(x = reorder(website, -activeUsers), y = activeUsers)) +
       geom_bar(stat = "identity", fill = "#007bc2") +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 45, hjust=1)) +
@@ -206,7 +229,7 @@ if (!interactive()) {
   options$port = 3838
   options$launch.browser = FALSE
   options$host = "0.0.0.0"
-
+  
 }
 
 shinyApp(ui, server, options=options)
