@@ -41,7 +41,7 @@ ui <- page_navbar(
   nav_spacer(),
   nav_panel("Google Analytics",
             layout_columns(
-              fill = TRUE,
+              fill = FALSE,
               value_box(
                 # TODO: Dynamic Rendering
                 # https://rstudio.github.io/bslib/articles/value-boxes/index.html#dynamic-rendering-shiny
