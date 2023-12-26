@@ -1,6 +1,8 @@
 library(tibble)
 library(readr)
 library(dplyr)
+library(tidyr)
+library(stringr)
 library(metricminer)
 
 # Custom rounding function for x > 1 that rounds up 
@@ -34,7 +36,24 @@ link_clicks <- tibble::as_tibble(itcr_website_data[[3]]) %>%
   mutate(linkUrl = paste0("<a href='", linkUrl,"' target='_blank'>", linkUrl,"</a>"))
 
 # jhudsl GitHub Metrics
-jhudsl_github_metrics <- read_tsv("data/jhudsl_github_metrics.tsv")
+jhudsl_github_metrics <- read_tsv("data/jhudsl_github_metrics.tsv") %>%
+  # convert all columns to character
+  mutate(across(everything(), as.character)) %>% 
+  # convert NA to Not Available
+  mutate(across(everything(), ~replace_na(as.character(.), "-"))) %>% 
+  mutate(repo_name = str_remove(repo_name, "jhudsl/"))
+  
+
+
+# fhdsl GitHub Metrics
+fhdsl_github_metrics <- read_csv("data/fhdsl_github_metrics.csv") %>%
+  # convert all columns to character
+  mutate(across(everything(), as.character)) %>% 
+  # convert NA to Not Available
+  mutate(across(everything(), ~replace_na(as.character(.), "-"))) %>% 
+  mutate(repo_name = str_remove(repo_name, "fhdsl/"))
+
+  
 
 # Slido
 slido_data <- readRDS("data/slido_data.RDS")
