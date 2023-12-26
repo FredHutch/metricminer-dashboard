@@ -130,7 +130,35 @@ ui <- page_navbar(
                 showcase = bsicons::bs_icon("exclamation-circle"),
                 showcase_layout = "top right"
               )
+            ),
+            layout_column_wrap(
+              fill = TRUE,
+              width = NULL,
+              style = css(grid_template_columns = "1.2fr 1fr"),
+              navset_card_tab(
+                height = 900,
+                full_screen = TRUE,
+                title = "Tables",
+                nav_panel(
+                  "Metrics",
+                  DTOutput("metrics_table")
+                ),
+                nav_panel(
+                  "Dimensions",
+                  DTOutput("dimensions_table")
+                ),
+                nav_panel(
+                  "Link Clicks",
+                  DTOutput("link_clicks_table")
+                )
+              ),
+              card(
+                card_header("Plot of Users"),
+                plotOutput("metric_plot")
+              )
+              
             )
+            
   ),
   nav_panel("Calendly"),
   nav_menu(
