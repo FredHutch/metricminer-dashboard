@@ -79,26 +79,26 @@ ui <- page_navbar(
               fill = TRUE,
               width = NULL,
               style = css(grid_template_columns = "1.2fr 1fr"),
-              navset_card_tab(
+              navset_card_underline(
                 height = 900,
                 full_screen = TRUE,
                 title = "Tables",
                 nav_panel(
                   "Metrics",
-                  DTOutput("metrics_table")
+                  DTOutput("google_analytics_metrics_table")
                 ),
                 nav_panel(
                   "Dimensions",
-                  DTOutput("dimensions_table")
+                  DTOutput("google_analytics_dimensions_table")
                 ),
                 nav_panel(
                   "Link Clicks",
-                  DTOutput("link_clicks_table")
+                  DTOutput("google_analytics_link_clicks_table")
                 )
               ),
               card(
                 card_header("Plot of Users"),
-                plotOutput("metric_plot")
+                plotOutput("google_analytics_metric_plot")
               )
               
             )
@@ -130,7 +130,31 @@ ui <- page_navbar(
                 showcase = bsicons::bs_icon("exclamation-circle"),
                 showcase_layout = "top right"
               )
+            ),
+            layout_column_wrap(
+              fill = TRUE,
+              width = NULL,
+              style = css(grid_template_columns = "1.2fr 1fr"),
+              navset_card_underline(
+                height = 900,
+                full_screen = TRUE,
+                title = "Tables",
+                nav_panel(
+                  "jhudsl GitHub Metrics",
+                  DTOutput("github_jhudsl_metric")
+                ),
+                nav_panel(
+                  "fhdsl GitHub Metrics",
+                  DTOutput("github_fhdsl_metric")
+                )
+              ),
+              card(
+                card_header("Plot of Users"),
+                plotOutput("github_metric_plot")
+              )
+              
             )
+            
   ),
   nav_panel("Calendly"),
   nav_menu(
@@ -143,7 +167,8 @@ ui <- page_navbar(
 )
 
 server <- function(input, output) {
-  output$metrics_table <- renderDT({
+  #### Google Analytics ####
+  output$google_analytics_metrics_table <- renderDT({
     datatable(
       metrics, 
       colnames = c("Website", "Active Users", "New Users", "Total Users",
@@ -160,7 +185,7 @@ server <- function(input, output) {
       fillContainer = TRUE
     )
   })
-  output$dimensions_table <- renderDT({
+  output$google_analytics_dimensions_table <- renderDT({
     datatable(
       dimensions, 
       colnames = c("Website", "Day", "Month", "Year",
@@ -172,7 +197,7 @@ server <- function(input, output) {
       escape = FALSE
     )
   })
-  output$link_clicks_table <- renderDT({
+  output$google_analytics_link_clicks_table <- renderDT({
     datatable(
       link_clicks, 
       colnames = c("Website", "Link URL"),
@@ -183,7 +208,7 @@ server <- function(input, output) {
       escape = FALSE
     )
   })
-  output$metric_plot <- renderPlot({
+  output$google_analytics_metric_plot <- renderPlot({
     ggplot(metrics, aes(x = reorder(website, -activeUsers), y = activeUsers)) +
       geom_bar(stat = "identity", fill = "#007bc2") +
       theme_classic() +
@@ -195,6 +220,32 @@ server <- function(input, output) {
       theme(axis.title.y = element_text(size = rel(1.5)),
             axis.text.x = element_text(size = rel(1.4)),
             axis.text.y = element_text(size = rel(1.4)))
+  })
+  
+  #### GitHub ####
+  output$github_jhudsl_metric <- renderDT({
+    datatable(
+      jhudsl_github_metrics, 
+      colnames = c("Repo", "# of Forks", "# of Contributors", "Total Contributions",
+                   "# of Stars", "Health Percentage", "# of Clones", "Unique Views"),
+      options = list(lengthChange = FALSE, # remove "Show X entries"
+                     searching = FALSE), # remove Search box
+      # For the table to grow/shrink
+      fillContainer = TRUE,
+      escape = FALSE
+    )
+  })
+  output$github_fhdsl_metric <- renderDT({
+    datatable(
+      fhdsl_github_metrics, 
+      colnames = c("Repo", "# of Forks", "# of Contributors", "Total Contributions",
+                   "# of Stars", "Health Percentage", "# of Clones", "Unique Views"),
+      options = list(lengthChange = FALSE, # remove "Show X entries"
+                     searching = FALSE), # remove Search box
+      # For the table to grow/shrink
+      fillContainer = TRUE,
+      escape = FALSE
+    )
   })
   
 }
