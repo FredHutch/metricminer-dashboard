@@ -27,7 +27,7 @@ link_help <- tags$a(
 
 ui <- page_navbar(
   # Favicon
-  tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
+  header = tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
   # Hard-code version of bootstrap used
   theme = bs_theme(version = 5),
   title = "ITCR Analytics",
